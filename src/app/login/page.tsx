@@ -1,19 +1,20 @@
-import Image from "next/image";
-import building from "../../../public/building.jpg";
+import { Button } from "@/components/Button";
+import { FormInput } from "@/components/FormInput";
 
 export default function Home() {
     return (
-        <div className="max-w mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
-            <div className="md:flex">
-                <div className="md:shrink-0">
-                    <Image className="h-48 w-full object-cover md:h-full md:w-48" src={building} alt="Modern building architecture"/>
-                </div>
-                <div className="p-8">
-                    <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Company retreats</div>
-                    <a href="#" className="block mt-1 text-lg leading-tight font-medium text-black hover:underline">Incredible accommodation for your team</a>
-                    <p className="mt-2 text-slate-500">Looking to take your team away on a retreat to enjoy awesome food and take in some sunshine? We have a list of places to do just that.</p>
+        <main className="h-screen w-screen bg-cover bg-scroll bg-[url('/background-landscape.jpeg')] flex">
+            <div className="bg-gray-800 bg-opacity-25 backdrop-blur-md flex justify-center items-center flex-1">
+                <div className="py-10 sm:w-96 md:w-1/4 lg:w-1/5 md:h-2/5 sm:h-3/4 bg-slate-800 rounded-2xl shadow-md flex flex-col justify-start items-center">
+
+                    <h2 className="text-3xl text-slate-200 font-sans">Login</h2>
+                    <FormInput inputType="email" label="Email"/>
+                    <FormInput inputType="password" label="Password"/>
+
+                    <Button label="Login"/>
+
                 </div>
             </div>
-        </div>
+        </main>
     )
 }
