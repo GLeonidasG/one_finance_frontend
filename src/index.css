@@ -17,6 +17,7 @@
 
 #root {
   display: flex;
+  width: 100%;
 }
 
 a {
@@ -34,6 +35,7 @@ a:hover {
   display: flex;
   flex: 1;
   height: 100vh;
+  width: 100vw;
 }
 
 body {
