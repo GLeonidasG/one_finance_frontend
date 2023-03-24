@@ -101,11 +101,12 @@ function RecordFormModal({ showModal, onSubmit, onCancel, action, data }: Record
 
 type DashboardTableProps = {
   records: Record[];
-  onClick?: (index: number) => void
+  onClick?: (index: number) => void;
+  onDelete?: (index: number) => void;
 };
 
-function DashboardTable({ records, onClick }: DashboardTableProps) {
-  const headers = Object.keys(records[0]);
+function DashboardTable({ records, onClick, onDelete }: DashboardTableProps) {
+  const headers = Object.keys(EmptyRecord || {});
   return (
     <div className="w-full p-2 overflow-auto bg-gray-900 rounded-lg shadow-md h-min">
       <table className="w-full border border-collapse rounded-lg border-slate-500">
@@ -118,12 +119,21 @@ function DashboardTable({ records, onClick }: DashboardTableProps) {
           {records.map((record, recordIndex) =>
             <tr key={recordIndex} className={`even:bg-gray-800 odd:bg-gray-900`}>
               {headers.map((header, headerIndex) =>
-                <td
-                  onClick={() => !onClick ? () => { } : onClick(recordIndex)}
-                  key={`${recordIndex}-${headerIndex}`}
-                  className="border border-slate-700 ...">{(record as any)[header]}
-                </td>
+                <>
+                  <td
+                    onClick={() => !onClick ? () => { } : onClick(recordIndex)}
+                    key={`${recordIndex}-${headerIndex}`}
+                    className="border border-slate-700 hover:cursor-pointer">{(record as any)[header]}
+                  </td>
+                </>
               )}
+              <td
+                onClick={() => !onDelete ? () => { } : onDelete(recordIndex)}
+                key={`${recordIndex}-delete`}
+                className="font-mono text-2xl font-bold text-center border border-slate-700 hover:cursor-pointer"
+              >
+                X
+              </td>
             </tr>
           )}
         </tbody>
@@ -141,7 +151,7 @@ export default function Dashboard() {
   const updateRecords = (record: Record) => {
     console.log(lastIndex)
     if (lastIndex !== null) {
-      console.table({lastIndex, record})
+      console.table({ lastIndex, record })
       localRecords[lastIndex] = record
       setLocalRecords(localRecords)
       setRecordToUpdate(null)
@@ -161,7 +171,7 @@ export default function Dashboard() {
         data={recordToUpdate}
         action={recordToUpdate ? "UPDATE" : "CREATE"}
         onSubmit={({ value: record, action }) => {
-          console.table({record, action})
+          console.table({ record, action })
           if (action === "CREATE") createRecords(record)
           if (action === "UPDATE") updateRecords(record)
           setShowModal(false)
@@ -174,11 +184,17 @@ export default function Dashboard() {
         <div className="flex flex-1 mb-5 max-h-12">
           <button onClick={() => setShowModal(true)}>Add record</button>
         </div>
-        <DashboardTable onClick={(index) => {
-          setRecordToUpdate(localRecords[index])
-          setLastIndex(index)
-          setShowModal(true)
-        }} records={localRecords} />
+        <DashboardTable
+          onClick={(index) => {
+            setRecordToUpdate(localRecords[index])
+            setLastIndex(index)
+            setShowModal(true)
+          }}
+          onDelete={(index) => {
+            setLocalRecords(localRecords.filter((_, recordIndex) => recordIndex !== index))
+          }}
+          records={localRecords}
+        />
       </div>
     </div>
   );
