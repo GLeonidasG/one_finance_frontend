@@ -3,9 +3,10 @@ import { useState } from "react"
 type FormInputProps = {
     inputType: string,
     label: string,
+    value?: string | number,
     onChange: (value: unknown) => void
 }
-export function FormInput({ inputType, label, onChange }: FormInputProps) {
+export function FormInput({ inputType, label, onChange, value }: FormInputProps) {
     return (
         <div style={{
             display: "flex",
@@ -20,6 +21,7 @@ export function FormInput({ inputType, label, onChange }: FormInputProps) {
             <input
                 onChange={({ target: { value } }) => onChange(value)}
                 type={inputType}
+                value={value}
                 style={{
                     borderRadius: 100,
                     borderStyle: "solid",
@@ -29,7 +31,8 @@ export function FormInput({ inputType, label, onChange }: FormInputProps) {
                     maxHeight: "45px",
                     outline: "none",
                     paddingInline: "5px",
-                    width: "100%"
+                    width: "100%",
+                    color: "white"
                 }} />
         </div>
     )
