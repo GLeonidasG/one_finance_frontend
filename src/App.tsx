@@ -1,12 +1,12 @@
-import { useState } from 'react'
+import { v4 as uuid } from "uuid"
 import './App.css'
-import {Outlet} from 'react-router-dom'
+import { Outlet, useRoutes } from 'react-router-dom'
+import {useEffect} from "react"
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <div className="main-container">
+    <div className="flex flex-1 w-full">
       <div className="sidebar-opacity">
         <div className="sidebar">
           <div className="user-icon">user icon</div>
