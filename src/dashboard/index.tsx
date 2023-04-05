@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {getRecordsFromCard} from "../apis/records";
+import { getRecordsFromCard, createRecord } from "../apis/records";
 import { getUsers, User } from "../apis/users";
 import { FormInput } from "../login";
 import { CardContainer } from "./components/cards";
@@ -12,7 +12,7 @@ type Record = {
   description: string,
   value: number,
   type: RecordType,
-  entryDate: string
+  entryDate: string,
 }
 
 type FormModalAction = "CREATE" | "UPDATE";
@@ -130,6 +130,7 @@ export default function Dashboard() {
   const [localRecords, setLocalRecords] = useState<Array<Record>>([])
   const [recordToUpdate, setRecordToUpdate] = useState<Record | null>(null)
   const [lastIndex, setLastIndex] = useState<number | null>(null)
+  const [currentCard, setCurrentCard] = useState<number>()
 
   useEffect(() => {
     getUsers(3).then((user) => setCurrentUser(user))
@@ -144,7 +145,17 @@ export default function Dashboard() {
   }
 
   const createRecords = (record: Record) => {
-    setLocalRecords([...localRecords, record]);
+    if (!record && !currentCard) return;
+    createRecord({
+      title: record.title,
+      description: record.description,
+      entryDate: new Date(record.entryDate),
+      type: record.type,
+      value: record.value,
+      recordsFromCardId: currentCard as number
+    }).then(() => {
+      setLocalRecords([...localRecords, record]);
+    });
   }
 
 
@@ -187,11 +198,12 @@ export default function Dashboard() {
         {currentUser?.cards.map((card, index) => (
           <CardContainer
             onClick={(id) => {
-               getRecordsFromCard(id)
-               .then((records) => {
+              getRecordsFromCard(id)
+                .then((records) => {
                   setLocalRecords(records)
-                 })
-              }}
+                  setCurrentCard(Number(id))
+                })
+            }}
             ID={card.ID}
             key={index}
             cardID={card.cardID}
@@ -208,7 +220,7 @@ export default function Dashboard() {
         </div>
         <DashboardTable
           onClick={(index) => {
-            setRecordToUpdate(localRecords[index]);
+            setRecordToUpdate(localRecords.find(record => record.id === index) || null);
             setLastIndex(index);
             setShowModal(true);
           }}
