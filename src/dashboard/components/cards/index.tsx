@@ -7,14 +7,17 @@ type CardProps = {
   validFrom: string | Date,
   validThru: string | Date,
   name: string,
+  isSelected: boolean,
   onClick: (id: string | number) => void
 }
 
 
-export function CardContainer({ ID, cardID, name, owner, validFrom, validThru, onClick }: CardProps) {
+export function CardContainer({ ID, cardID, name, owner, validFrom, validThru, onClick, isSelected }: CardProps) {
+
+  console.log("IS SELECTED", isSelected)
 
   return (
-    <div onClick={() => {onClick(ID)}} className="flex flex-col w-4/5 p-2 my-2 bg-purple-700 shadow-lg opacity-100 h-44 rounded-2xl min-h-[165px] hover:cursor-pointer">
+    <div onClick={() => {onClick(ID)}} className={`flex flex-col w-4/5 p-2 my-2 bg-purple-700 shadow-lg opacity-100 h-44 rounded-2xl min-h-[165px] hover:cursor-pointer ${isSelected ? "border-dashed border-purple-500 border-2" : ""}`}>
       <h1 className="text-lg font-medium tracking-normal text-left">{name}</h1>
       <h1 className="text-sm font-normal tracking-wide text-left">{owner}</h1>
       <div className="flex flex-row flex-1">

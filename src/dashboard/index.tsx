@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
-import { getRecordsFromCard, createRecord } from "../apis/records";
+import { getRecordsFromCard, createRecord, Record, updateRecord } from "../apis/records";
 import { getUsers, User } from "../apis/users";
 import { FormInput } from "../login";
 import { CardContainer } from "./components/cards";
 
 type RecordType = "CREDIT" | "DEBIT";
 
-type Record = {
-  id?: number,
-  title: string,
-  description: string,
-  value: number,
-  type: RecordType,
-  entryDate: string,
-}
+// type Record = {
+//   ID?: number,
+//   title: string,
+//   description: string,
+//   value: number,
+//   type: RecordType,
+//   entryDate: string,
+// }
 
 type FormModalAction = "CREATE" | "UPDATE";
 type OnSubmitResult = { action: FormModalAction, value: Record }
@@ -26,7 +26,7 @@ type RecordFormModalProps = {
   data?: Record | null
 };
 
-const EmptyRecord: Record = { title: "", description: "", entryDate: new Date().toLocaleDateString().substring(0, 10), type: "CREDIT", value: 0 };
+const EmptyRecord: Record = { ID: 0, title: "", description: "", entryDate: new Date().toLocaleDateString().substring(0, 10), type: "CREDIT", value: 0 };
 function RecordFormModal({ showModal, onSubmit, onCancel, action, data }: RecordFormModalProps) {
 
   const [record, setRecord] = useState<Record>(data || EmptyRecord);
@@ -99,17 +99,20 @@ function DashboardTable({ records, onClick, onDelete }: DashboardTableProps) {
         <tbody>
           {records.map((record, recordIndex) =>
             <tr key={recordIndex} className={`even:bg-gray-800 odd:bg-gray-900`}>
-              {headers.map((header, headerIndex) =>
-                <>
-                  <td
-                    onClick={() => !onClick ? () => { } : onClick(record.id || 0)}
-                    key={`${recordIndex}-${headerIndex}`}
-                    className="pl-2 border border-slate-700 hover:cursor-pointer">{(record as any)[header]}
-                  </td>
-                </>
+              {headers.map((header, headerIndex) => {
+                return (
+                  <>
+                    <td
+                      onClick={() => !onClick ? () => { } : onClick(record.ID || 0)}
+                      key={`${recordIndex}-${headerIndex}`}
+                      className="pl-2 border border-slate-700 hover:cursor-pointer">{(record as any)[header]}
+                    </td>
+                  </>
+                )
+              }
               )}
               <td
-                onClick={() => !onDelete ? () => { } : onDelete(record.id || 0)}
+                onClick={() => !onDelete ? () => { } : onDelete(record.ID || 0)}
                 key={`${recordIndex}-delete`}
                 className="font-mono text-2xl font-bold text-center border border-slate-700 hover:cursor-pointer"
               >
@@ -130,29 +133,44 @@ export default function Dashboard() {
   const [localRecords, setLocalRecords] = useState<Array<Record>>([])
   const [recordToUpdate, setRecordToUpdate] = useState<Record | null>(null)
   const [lastIndex, setLastIndex] = useState<number | null>(null)
-  const [currentCard, setCurrentCard] = useState<number>()
+  const [currentCard, setCurrentCard] = useState<number | null>()
 
   useEffect(() => {
-    getUsers(3).then((user) => setCurrentUser(user))
+    getUsers(3).then((user) => {
+      setCurrentUser(user)
+      const cardID = user.cards[0] !== undefined ? user.cards[0].ID : null
+      setCurrentCard(cardID)
+      if (cardID !== null) {
+        getRecordsFromCard(cardID).then((records) => {
+          setLocalRecords(records)
+        })
+      }
+    })
   }, [])
 
   const updateRecords = (record: Record) => {
-    if (lastIndex !== null) {
-      localRecords[lastIndex] = record
-      setLocalRecords(localRecords)
-      setRecordToUpdate(null)
+    console.table({ lastIndex, currentCard })
+    if (lastIndex !== null && currentCard !== null && currentCard !== undefined) {
+      updateRecord(lastIndex, { ...record, recordsFromCardId: currentCard })
+        .then(() => {
+          getRecordsFromCard(currentCard).then((records) => {
+            setLocalRecords(records)
+            setRecordToUpdate(null)
+
+          })
+        })
     }
   }
 
   const createRecords = (record: Record) => {
-    if (!record && !currentCard) return;
+    if (!record || currentCard !== undefined || currentCard !== null) return;
     createRecord({
       title: record.title,
       description: record.description,
       entryDate: new Date(record.entryDate),
       type: record.type,
       value: record.value,
-      recordsFromCardId: currentCard as number
+      recordsFromCardId: currentCard
     }).then(() => {
       setLocalRecords([...localRecords, record]);
     });
@@ -188,7 +206,6 @@ export default function Dashboard() {
         data={recordToUpdate}
         action={recordToUpdate ? "UPDATE" : "CREATE"}
         onSubmit={({ value: record, action }) => {
-          console.table({ record, action });
           if (action === "CREATE") createRecords(record);
           if (action === "UPDATE") updateRecords(record);
           setShowModal(false);
@@ -204,6 +221,7 @@ export default function Dashboard() {
                   setCurrentCard(Number(id))
                 })
             }}
+            isSelected={card.ID === currentCard}
             ID={card.ID}
             key={index}
             cardID={card.cardID}
@@ -220,7 +238,7 @@ export default function Dashboard() {
         </div>
         <DashboardTable
           onClick={(index) => {
-            setRecordToUpdate(localRecords.find(record => record.id === index) || null);
+            setRecordToUpdate(localRecords.find(record => record.ID === index) || null);
             setLastIndex(index);
             setShowModal(true);
           }}
