@@ -163,7 +163,8 @@ export default function Dashboard() {
   }
 
   const createRecords = (record: Record) => {
-    if (!record || currentCard !== undefined || currentCard !== null) return;
+    console.table({ record, currentCard })
+    if (!record || currentCard == undefined || currentCard == null) return;
     createRecord({
       title: record.title,
       description: record.description,
@@ -172,7 +173,7 @@ export default function Dashboard() {
       value: record.value,
       recordsFromCardId: currentCard
     }).then(() => {
-      setLocalRecords([...localRecords, record]);
+      getRecordsFromCard(currentCard).then(records => setLocalRecords(records))
     });
   }
 
