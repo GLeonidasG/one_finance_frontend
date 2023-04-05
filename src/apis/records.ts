@@ -1,3 +1,4 @@
+import {Update} from "vite/types/hmrPayload";
 import { BASE_URL } from "./users";
 
 type RecordType = "DEBIT" | "CREDIT"
@@ -16,10 +17,21 @@ export class CreateRecordDTO {
   constructor(
     public title: string,
     public description: string,
-    public entryDate: Date,
+    public entryDate: Date | string,
     public type: RecordType,
     public value: number,
     public recordsFromCardId: number
+  ) {}
+}
+
+export class UpdateRecordDTO {
+  constructor(
+    public recordsFromCardId: number | string,
+    public title?: string,
+    public description?: string,
+    public entryDate?: Date | string,
+    public type?: RecordType,
+    public value?: number
   ) {}
 }
 
@@ -34,4 +46,14 @@ export async function createRecord(record: CreateRecordDTO): Promise<void> {
     body: JSON.stringify(record)
   }
   await fetch(`${BASE_URL}/record`, options)
+}
+
+export async function updateRecord(id: string | number, record: UpdateRecordDTO): Promise<void> {
+  const options = {
+    method: "PATCH",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(record)
+  }
+  const response = await fetch(`${BASE_URL}/record/${id}`, options)
+  console.log(response)
 }
