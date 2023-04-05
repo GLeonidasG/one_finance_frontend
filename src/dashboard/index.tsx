@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getRecordsFromCard, createRecord, Record, updateRecord } from "../apis/records";
+import { getRecordsFromCard, createRecord, Record, updateRecord, deleteRecord } from "../apis/records";
 import { getUsers, User } from "../apis/users";
 import { FormInput } from "../login";
 import { CardContainer } from "./components/cards";
@@ -182,7 +182,11 @@ export default function Dashboard() {
       <ConfirmationModal
         onConfirm={() => {
           if (lastIndex !== null) {
-            setLocalRecords(localRecords.filter((_, index) => index !== lastIndex));
+            deleteRecord(lastIndex)
+              .then(() => {
+                getRecordsFromCard(currentCard as number)
+                  .then((records) => setLocalRecords(records))
+              })
           }
           setShowConfimation(false);
         }}
