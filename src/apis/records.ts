@@ -54,6 +54,12 @@ export async function updateRecord(id: string | number, record: UpdateRecordDTO)
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(record)
   }
-  const response = await fetch(`${BASE_URL}/record/${id}`, options)
-  console.log(response)
+  await fetch(`${BASE_URL}/record/${id}`, options)
+}
+
+export async function deleteRecord(id: string | number): Promise<void> {
+  const options = {
+    method: "DELETE"
+  }
+  await fetch(`${BASE_URL}/record/${id}`, options)
 }
