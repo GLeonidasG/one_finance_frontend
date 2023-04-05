@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import {getRecordsFromCard} from "../apis/records";
 import { getUsers, User } from "../apis/users";
 import { FormInput } from "../login";
 import { CardContainer } from "./components/cards";
@@ -12,17 +13,6 @@ type Record = {
   value: number,
   type: RecordType,
   entryDate: string
-}
-
-const records = new Map<number, Record>()
-
-for (const record of [
-  { id: 0, title: "UNISIONS", description: "Mensalidade da UNISIONS", value: 450, type: "DEBIT", entryDate: new Date().toLocaleDateString() },
-  { id: 1, title: "SALARIO", description: "Entrada do salario", value: 9500, type: "CREDIT", entryDate: new Date().toLocaleDateString() },
-  { id: 2, title: "Quiropraxia", description: "Quiropraxia", value: 310, type: "DEBIT", entryDate: new Date().toLocaleDateString() },
-  { id: 3, title: "Vale Ali/Ref", description: "Entrada dos vales", value: 850, type: "CREDIT", entryDate: new Date().toLocaleDateString() }
-] as Record[]) {
-  records.set(record.id || 0, record);
 }
 
 type FormModalAction = "CREATE" | "UPDATE";
@@ -91,7 +81,7 @@ function ConfirmationModal({ showModal, onConfirm, onCancel, title, body, confir
 
 
 type DashboardTableProps = {
-  records: Map<number, Record>;
+  records: Array<Record>;
   onClick?: (index: number) => void;
   onDelete?: (index: number) => void;
 };
@@ -107,7 +97,7 @@ function DashboardTable({ records, onClick, onDelete }: DashboardTableProps) {
           </tr>
         </thead>
         <tbody>
-          {[...records?.values()].map((record, recordIndex) =>
+          {records.map((record, recordIndex) =>
             <tr key={recordIndex} className={`even:bg-gray-800 odd:bg-gray-900`}>
               {headers.map((header, headerIndex) =>
                 <>
@@ -137,7 +127,7 @@ export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [showConfirmation, setShowConfimation] = useState(false)
-  const [localRecords, setLocalRecords] = useState<typeof records>(records)
+  const [localRecords, setLocalRecords] = useState<Array<Record>>([])
   const [recordToUpdate, setRecordToUpdate] = useState<Record | null>(null)
   const [lastIndex, setLastIndex] = useState<number | null>(null)
 
@@ -147,16 +137,14 @@ export default function Dashboard() {
 
   const updateRecords = (record: Record) => {
     if (lastIndex !== null) {
-      localRecords.set(lastIndex, { ...localRecords.get(lastIndex), ...record })
+      localRecords[lastIndex] = record
       setLocalRecords(localRecords)
       setRecordToUpdate(null)
     }
   }
 
   const createRecords = (record: Record) => {
-    const nextId = ([...localRecords.values()].sort((a, b) => (a.id as number) - (b.id as number)).pop()?.id || 0) + 1;
-    localRecords.set(nextId, { ...record, id: nextId })
-    setLocalRecords(localRecords);
+    setLocalRecords([...localRecords, record]);
   }
 
 
@@ -165,10 +153,7 @@ export default function Dashboard() {
       <ConfirmationModal
         onConfirm={() => {
           if (lastIndex !== null) {
-            console.log(...localRecords.values());
-            localRecords.delete(lastIndex);
-            console.log(...localRecords.values());
-            setLocalRecords(localRecords);
+            setLocalRecords(localRecords.filter((_, index) => index !== lastIndex));
           }
           setShowConfimation(false);
         }}
@@ -223,7 +208,7 @@ export default function Dashboard() {
         </div>
         <DashboardTable
           onClick={(index) => {
-            setRecordToUpdate(localRecords.get(index) || null);
+            setRecordToUpdate(localRecords[index]);
             setLastIndex(index);
             setShowModal(true);
           }}
