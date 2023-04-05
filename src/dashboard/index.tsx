@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getUsers, User } from "../apis/users";
 import { FormInput } from "../login";
 import { CardContainer } from "./components/cards";
 
@@ -134,10 +135,15 @@ function DashboardTable({ records, onClick, onDelete }: DashboardTableProps) {
 
 export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [showConfirmation, setShowConfimation] = useState(false)
   const [localRecords, setLocalRecords] = useState<typeof records>(records)
   const [recordToUpdate, setRecordToUpdate] = useState<Record | null>(null)
   const [lastIndex, setLastIndex] = useState<number | null>(null)
+
+  useEffect(() => {
+    getUsers(3).then((user) => setCurrentUser(user))
+  }, [])
 
   const updateRecords = (record: Record) => {
     if (lastIndex !== null) {
@@ -193,8 +199,22 @@ export default function Dashboard() {
         }}
       />
       <div className="flex flex-col items-center flex-1 max-w-md p-4 m-2 overflow-scroll bg-gray-800 shadow-md rounded-xl opacity-90 backdrop:blur-lg">
-        {cards.map((card) => (
-          <Card {...card} />
+        {currentUser?.cards.map((card, index) => (
+          <CardContainer
+            onClick={(id) => {
+               getRecordsFromCard(id)
+               .then((records) => {
+                  setLocalRecords(records)
+                 })
+              }}
+            ID={card.ID}
+            key={index}
+            cardID={card.cardID}
+            name={card.name}
+            owner={currentUser.username}
+            validFrom={card.validFrom}
+            validThru={card.validThru}
+          />
         ))}
       </div>
       <div className="flex flex-col flex-1 p-3 bg-gray-800 rounded-xl backdrop:blur-lg opacity-90 table-container">
