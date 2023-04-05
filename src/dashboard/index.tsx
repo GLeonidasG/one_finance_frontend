@@ -1,44 +1,6 @@
 import { useEffect, useState } from "react";
 import { FormInput } from "../login";
-
-type Card = {
-  cardID?: string,
-  owner?: string,
-  validFrom?: string | Date,
-  validThru?: string | Date,
-  title?: string
-}
-
-export function Card({ cardID, title, owner, validFrom, validThru }: Card) {
-
-  return (
-    <div className="flex flex-col w-4/5 p-2 my-2 bg-purple-700 shadow-lg opacity-100 h-44 rounded-2xl min-h-[165px]">
-      <h1 className="text-lg font-medium tracking-normal text-left">{title}</h1>
-      <h1 className="text-sm font-normal tracking-wide text-left">{owner}</h1>
-      <div className="flex flex-row flex-1">
-        <div className="flex flex-row items-center mr-4">
-          <h1 className="text-xs font-light tracking-tighter text-left">valid <br /> from</h1>
-          <h1 className="mx-2 text-xs font-light tracking-tighter text-left">{String(validFrom)}</h1>
-        </div>
-        <div className="flex flex-row items-center ml-4">
-          <h1 className="text-xs font-light tracking-tighter text-left">valid <br /> thru</h1>
-          <h1 className="mx-2 text-xs font-light tracking-tighter text-left">{String(validThru)}</h1>
-        </div>
-      </div>
-      <h1 className="text-lg font-semibold tracking-wider text-left">{cardID}</h1>
-    </div>
-  )
-
-}
-
-const cards = [
-  { cardID: "9999 9999 9999 9999", owner: "GENARIO L GOETZ", validFrom: "31/10/1999", validThru: "31/10/2050", title: "NUBANK" },
-  { cardID: "9999 9999 9999 9999", owner: "GENARIO L GOETZ", validFrom: "31/10/1999", validThru: "31/10/2050", title: "NUBANK" },
-  { cardID: "9999 9999 9999 9999", owner: "GENARIO L GOETZ", validFrom: "31/10/1999", validThru: "31/10/2050", title: "NUBANK" },
-  { cardID: "9999 9999 9999 9999", owner: "GENARIO L GOETZ", validFrom: "31/10/1999", validThru: "31/10/2050", title: "NUBANK" },
-  { cardID: "9999 9999 9999 9999", owner: "GENARIO L GOETZ", validFrom: "31/10/1999", validThru: "31/10/2050", title: "NUBANK" },
-  { cardID: "9999 9999 9999 9999", owner: "GENARIO L GOETZ", validFrom: "31/10/1999", validThru: "31/10/2050", title: "NUBANK" }
-];
+import { CardContainer } from "./components/cards";
 
 type RecordType = "CREDIT" | "DEBIT";
 
