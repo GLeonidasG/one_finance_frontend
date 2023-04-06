@@ -177,24 +177,37 @@ export default function Dashboard() {
     });
   }
 
+  function cancelDelete(): () => void {
+    return () => {
+      setLastIndex(null);
+      setShowConfimation(false);
+    };
+  }
+
+  function confirmDelete(): () => void {
+    return () => {
+      if (lastIndex !== null) {
+        deleteRecord(lastIndex)
+          .then(() => {
+            getRecordsFromCard(currentCard as number)
+              .then((records) => setLocalRecords(records));
+          });
+      }
+      setShowConfimation(false);
+    };
+  }
+
+  function submitRecord({ value: record, action }: OnSubmitResult) {
+    if (action === "CREATE") createRecords(record);
+    if (action === "UPDATE") updateRecords(record);
+    setShowModal(false);
+  }
 
   return (
     <div className="flex flex-1 m-6">
       <ConfirmationModal
-        onConfirm={() => {
-          if (lastIndex !== null) {
-            deleteRecord(lastIndex)
-              .then(() => {
-                getRecordsFromCard(currentCard as number)
-                  .then((records) => setLocalRecords(records))
-              })
-          }
-          setShowConfimation(false);
-        }}
-        onCancel={() => {
-          setLastIndex(null);
-          setShowConfimation(false);
-        }}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
         title="Delete record"
         body="You are about to remove a record from the list. Are you sure?"
         confirmText="Yes"
@@ -202,19 +215,11 @@ export default function Dashboard() {
         showModal={showConfirmation}
       />
       <RecordFormModal
-        onCancel={() => {
-          setRecordToUpdate(null);
-          setLastIndex(null);
-          setShowModal(false);
-        }}
+        onCancel={cancelRecord}
         showModal={showModal}
         data={recordToUpdate}
         action={recordToUpdate ? "UPDATE" : "CREATE"}
-        onSubmit={({ value: record, action }) => {
-          if (action === "CREATE") createRecords(record);
-          if (action === "UPDATE") updateRecords(record);
-          setShowModal(false);
-        }}
+        onSubmit={submitRecord}
       />
       <div className="flex flex-col items-center flex-1 max-w-md p-4 m-2 overflow-scroll bg-gray-800 shadow-md rounded-xl opacity-90 backdrop:blur-lg">
         {currentUser?.cards.map((card, index) => (
@@ -256,4 +261,12 @@ export default function Dashboard() {
       </div>
     </div>
   );
+
+  function cancelRecord(): () => void {
+    return () => {
+      setRecordToUpdate(null);
+      setLastIndex(null);
+      setShowModal(false);
+    };
+  }
 }
