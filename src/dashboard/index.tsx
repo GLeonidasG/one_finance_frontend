@@ -197,10 +197,43 @@ export default function Dashboard() {
     };
   }
 
+  function cancelRecord(): () => void {
+    return () => {
+      setRecordToUpdate(null);
+      setLastIndex(null);
+      setShowModal(false);
+    };
+  }
+
   function submitRecord({ value: record, action }: OnSubmitResult) {
     if (action === "CREATE") createRecords(record);
     if (action === "UPDATE") updateRecords(record);
     setShowModal(false);
+  }
+
+  function generateCards() {
+    return currentUser?.cards.map((card, index) => (
+      <CardContainer
+        onClick={onClick() }
+        isSelected={card.ID === currentCard}
+        ID={card.ID}
+        key={index}
+        cardID={card.cardID}
+        name={card.name}
+        owner={currentUser.username}
+        validFrom={card.validFrom}
+        validThru={card.validThru} />
+    ));
+
+    function onClick(): (id: string | number) => void {
+      return (id) => {
+        getRecordsFromCard(id)
+          .then((records) => {
+            setLocalRecords(records);
+            setCurrentCard(Number(id));
+          });
+      };
+    }
   }
 
   return (
@@ -222,25 +255,7 @@ export default function Dashboard() {
         onSubmit={submitRecord}
       />
       <div className="flex flex-col items-center flex-1 max-w-md p-4 m-2 overflow-scroll bg-gray-800 shadow-md rounded-xl opacity-90 backdrop:blur-lg">
-        {currentUser?.cards.map((card, index) => (
-          <CardContainer
-            onClick={(id) => {
-              getRecordsFromCard(id)
-                .then((records) => {
-                  setLocalRecords(records)
-                  setCurrentCard(Number(id))
-                })
-            }}
-            isSelected={card.ID === currentCard}
-            ID={card.ID}
-            key={index}
-            cardID={card.cardID}
-            name={card.name}
-            owner={currentUser.username}
-            validFrom={card.validFrom}
-            validThru={card.validThru}
-          />
-        ))}
+        {generateCards()}
       </div>
       <div className="flex flex-col flex-1 p-3 bg-gray-800 rounded-xl backdrop:blur-lg opacity-90 table-container">
         <div className="flex flex-1 mb-5 max-h-12">
@@ -261,12 +276,4 @@ export default function Dashboard() {
       </div>
     </div>
   );
-
-  function cancelRecord(): () => void {
-    return () => {
-      setRecordToUpdate(null);
-      setLastIndex(null);
-      setShowModal(false);
-    };
-  }
 }
