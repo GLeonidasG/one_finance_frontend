@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getRecordsFromCard, createRecord, Record, updateRecord, deleteRecord } from "../apis/records";
 import { getUsers, User } from "../apis/users";
 import { FormInput } from "../components/FormInput";
-import {FormSelect} from "../components/FormSelect";
+import { FormSelect } from "../components/FormSelect";
 import { CardContainer } from "./components/cards";
 
 type RecordType = "CREDIT" | "DEBIT";
@@ -32,12 +32,15 @@ function RecordFormModal({ showModal, onSubmit, onCancel, action, data }: Record
       <div className="flex flex-col p-8 font-bold text-black bg-gray-700 rounded-lg opacity-100">
         <h1 className="text-xl font-semibold tracking-wide text-white">{action === "CREATE" ? "Create new record" : action === "UPDATE" && "Update current record"}</h1>
         <FormInput value={record.title} inputType="text" label="Title" onChange={(value) => setRecord({ ...record, title: value as string })} />
+
         <FormInput value={record.description} inputType="text" label="Description" onChange={(value) => setRecord({ ...record, description: value as string })} />
+
         <FormInput value={record.value} inputType="text" label="Value" onChange={(value) => setRecord({ ...record, value: isNaN(Number(value)) ? 0 : Number(value) })} />
-        <FormSelect options={[{key: "Debit", value: "DEBIT"}, {key: "Credit", value: "CREDIT"}]} />
-        {/*<FormInput value={record.type} inputType="text" label="Type" onChange={(value) => setRecord({ ...record, type: value as RecordType })} />*/}
-        
+
+        <FormSelect label="Type" options={[{ key: "Debit", value: "DEBIT" }, { key: "Credit", value: "CREDIT" }]} />
+
         <FormInput value={new Date(record.entryDate).toISOString().substring(0, 10)} inputType="date" label="Entry Date" onChange={(value) => setRecord({ ...record, entryDate: value as string })} />
+
         <button className="mt-5 mb-2 font-semibold tracking-wide text-center text-white" onClick={() => onSubmit({ action, value: record })}>Submit</button>
         <button className="my-2 font-semibold tracking-wide text-center text-white bg-transparent border-2 border-gray-300" onClick={() => {
           setRecord(EmptyRecord)
