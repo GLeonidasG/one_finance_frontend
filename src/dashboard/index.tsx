@@ -36,6 +36,7 @@ function RecordFormModal({ showModal, onSubmit, onCancel, action, data }: Record
         <FormInput value={record.value} inputType="text" label="Value" onChange={(value) => setRecord({ ...record, value: isNaN(Number(value)) ? 0 : Number(value) })} />
         <FormSelect options={[{key: "Debit", value: "DEBIT"}, {key: "Credit", value: "CREDIT"}]} />
         {/*<FormInput value={record.type} inputType="text" label="Type" onChange={(value) => setRecord({ ...record, type: value as RecordType })} />*/}
+        
         <FormInput value={new Date(record.entryDate).toISOString().substring(0, 10)} inputType="date" label="Entry Date" onChange={(value) => setRecord({ ...record, entryDate: value as string })} />
         <button className="mt-5 mb-2 font-semibold tracking-wide text-center text-white" onClick={() => onSubmit({ action, value: record })}>Submit</button>
         <button className="my-2 font-semibold tracking-wide text-center text-white bg-transparent border-2 border-gray-300" onClick={() => {
@@ -247,11 +248,16 @@ export default function Dashboard() {
         action={recordToUpdate ? "UPDATE" : "CREATE"}
         onSubmit={submitRecord}
       />
-      <div className="flex flex-col items-center flex-1 max-w-md p-4 m-2 overflow-scroll bg-gray-800 shadow-md rounded-xl opacity-90 backdrop:blur-lg">
+      <div className="flex flex-col items-center flex-1 max-w-md p-4 mr-2 overflow-scroll bg-gray-800 shadow-md rounded-xl opacity-90 backdrop:blur-lg">
+        <div className="flex flex-1 w-4/5 max-h-12">
+        <button className="self-start">
+        Add cards
+        </button>
+        </div>
         {generateCards()}
       </div>
-      <div className="flex flex-col flex-1 p-3 bg-gray-800 rounded-xl backdrop:blur-lg opacity-90 table-container">
-        <div className="flex flex-1 mb-5 max-h-12">
+      <div className="flex flex-col flex-1 p-3 ml-2 bg-gray-800 rounded-xl backdrop:blur-lg opacity-90">
+        <div className="mb-5 max-h-12">
           <button onClick={() => setShowModal(true)}>Add record</button>
         </div>
         <DashboardTable
