@@ -146,7 +146,6 @@ export default function Dashboard() {
   }, [])
 
   const updateRecords = (record: Record) => {
-    console.table({ lastIndex, currentCard })
     if (lastIndex !== null && currentCard !== null && currentCard !== undefined) {
       updateRecord(lastIndex, { ...record, recordsFromCardId: currentCard })
         .then(() => {
@@ -160,7 +159,6 @@ export default function Dashboard() {
   }
 
   const createRecords = (record: Record) => {
-    console.table({ record, currentCard })
     if (!record || currentCard == undefined || currentCard == null) return;
     createRecord({
       title: record.title,
@@ -174,32 +172,26 @@ export default function Dashboard() {
     });
   }
 
-  function cancelDelete(): () => void {
-    return () => {
-      setLastIndex(null);
-      setShowConfimation(false);
-    };
+  function cancelDelete() {
+    setLastIndex(null);
+    setShowConfimation(false);
+  };
+
+  function confirmDelete() {
+    if (lastIndex !== null) {
+      deleteRecord(lastIndex)
+        .then(() => {
+          getRecordsFromCard(currentCard as number)
+            .then((records) => setLocalRecords(records));
+        });
+    }
+    setShowConfimation(false);
   }
 
-  function confirmDelete(): () => void {
-    return () => {
-      if (lastIndex !== null) {
-        deleteRecord(lastIndex)
-          .then(() => {
-            getRecordsFromCard(currentCard as number)
-              .then((records) => setLocalRecords(records));
-          });
-      }
-      setShowConfimation(false);
-    };
-  }
-
-  function cancelRecord(): () => void {
-    return () => {
-      setRecordToUpdate(null);
-      setLastIndex(null);
-      setShowModal(false);
-    };
+  function cancelRecord() {
+    setRecordToUpdate(null);
+    setLastIndex(null);
+    setShowModal(false);
   }
 
   function submitRecord({ value: record, action }: OnSubmitResult) {
@@ -211,7 +203,7 @@ export default function Dashboard() {
   function generateCards() {
     return currentUser?.cards.map((card, index) => (
       <CardContainer
-        onClick={onClick() }
+        onClick={onClick()}
         isSelected={card.ID === currentCard}
         ID={card.ID}
         key={index}
@@ -253,9 +245,9 @@ export default function Dashboard() {
       />
       <div className="flex flex-col items-center flex-1 max-w-md p-4 mr-2 overflow-scroll bg-gray-800 shadow-md rounded-xl opacity-90 backdrop:blur-lg">
         <div className="flex flex-1 w-4/5 max-h-12">
-        <button className="self-start">
-        Add cards
-        </button>
+          <button className="self-start">
+            Add cards
+          </button>
         </div>
         {generateCards()}
       </div>
