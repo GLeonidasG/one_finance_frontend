@@ -1,4 +1,4 @@
-import {BASE_URL} from "./users"
+import { BASE_URL } from "./users"
 
 export const getYearMonth = (date: string | Date) =>
   new Date(date)
@@ -6,10 +6,11 @@ export const getYearMonth = (date: string | Date) =>
     .split("/")
     .filter((_, index) => index !== 1)
     .join("/")
+
 export class Card {
   constructor(
     public ID: number,
-    public belogsToUserID: number,
+    public belongsToUserID: number,
     public cardID: string,
     public name: string,
     public validFrom: string,
@@ -20,6 +21,16 @@ export class Card {
   public get _validFrom() { return getYearMonth(this.validFrom) }
 }
 
+export class CreateCard {
+  constructor(
+    public cardID: string,
+    public name: string,
+    public validFrom: string,
+    public validThru: string,
+    public belongsToUserID: number
+  ) { }
+}
+
 
 export async function createCard(card: Card): Promise<void> {
   const options = {
@@ -27,6 +38,7 @@ export async function createCard(card: Card): Promise<void> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(card)
   }
+  console.log(options.body)
   await fetch(`${BASE_URL}/card`, options)
 }
 

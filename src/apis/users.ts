@@ -4,6 +4,7 @@ export const BASE_URL = "http://localhost:3000";
 
 export class User {
   constructor(
+    public ID: number,
     public username: string,
     public email: string,
     public cards: Array<Card>
