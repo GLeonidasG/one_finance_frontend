@@ -45,6 +45,7 @@ export default function Dashboard() {
   }
 
   const createRecords = (record: Record) => {
+    console.log(record)
     if (!record || currentCard == undefined || currentCard == null) return;
     createRecord({
       title: record.title,
@@ -106,10 +107,15 @@ export default function Dashboard() {
         .then(() => {
           getUsers(3).then((user) => {
             setCurrentUser(user)
-            setCurrentCard(user.cards[0].ID)
-            getRecordsFromCard(user.cards[0].ID).then((records) => {
-              setLocalRecords(records)
-            })
+            if (user.cards.length) {
+              setCurrentCard(user.cards[0].ID)
+              getRecordsFromCard(user.cards[0].ID).then((records) => {
+                setLocalRecords(records)
+              })
+            } else {
+              setCurrentCard(null)
+              setLocalRecords([])
+            }
           })
         })
     }
@@ -133,6 +139,13 @@ export default function Dashboard() {
           getUsers(currentUser.ID)
             .then((value) => {
               setCurrentUser(value)
+              if (value.cards.length) {
+                  const cardID = value.cards[0].ID
+                  setCurrentCard(cardID)
+                  getRecordsFromCard(cardID).then((records) => {
+                      setLocalRecords(records)
+                    })
+                }
             })
 
         })
