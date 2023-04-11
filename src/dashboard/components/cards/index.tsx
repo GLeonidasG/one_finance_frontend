@@ -9,13 +9,15 @@ type CardProps = {
   name: string,
   isSelected: boolean,
   onClick: (id: string | number) => void
+  onDelete: (id: string | number) => void
 }
 
 
-export function CardContainer({ ID, cardID, name, owner, validFrom, validThru, onClick, isSelected }: CardProps) {
+export function CardContainer({ ID, cardID, name, owner, validFrom, validThru, onClick, isSelected, onDelete }: CardProps) {
 
   return (
-    <div onClick={() => { onClick(ID) }} className={`flex flex-col justify-evenly w-4/5 p-2 my-2 from-purple-900 via-indigo-600 to-sky-600 bg-gradient-to-t shadow-xl h-44 rounded-2xl min-h-[165px] hover:cursor-pointer ${isSelected ? "border-solid border-sky-500 border-2" : ""}`}>
+    <div onClick={() => { onClick(ID) }} className={`flex flex-col relative justify-evenly w-4/5 p-2 my-2 from-purple-900 via-indigo-600 to-sky-600 bg-gradient-to-t shadow-xl h-44 rounded-2xl min-h-[165px] hover:cursor-pointer ${isSelected ? "border-solid border-sky-500 border-2" : ""}`}>
+      <button onClick={() => onDelete(ID)} className="absolute top-0 right-0 flex items-center justify-center w-4 h-10 font-bold text-center rounded-full" >X</button>
       <h1 className="text-lg font-medium tracking-normal text-left">{name}</h1>
       <h1 className="self-start text-lg font-semibold tracking-wider text-left">{cardID}</h1>
       <h1 className="m-0 text-xs tracking-wide text-left uppercase font-sm">{owner}</h1>

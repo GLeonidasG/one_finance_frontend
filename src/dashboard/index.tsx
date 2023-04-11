@@ -6,7 +6,7 @@ import { ConfirmationModal } from "../components/ConfimationModal"
 import { RecordFormModal } from "./components/RecordFormModal"
 import { DashboardTable } from "./components/DashboardTable"
 import { CardsFormModal } from "./components/CardsFormModal";
-import { createCard, updateCard } from "../apis/cards";
+import { createCard, deleteCard, updateCard } from "../apis/cards";
 
 export default function Dashboard() {
   const [showRecordModal, setShowRecordModal] = useState(false);
@@ -89,7 +89,8 @@ export default function Dashboard() {
   function generateCards() {
     return currentUser?.cards.map((card, index) => (
       <CardContainer
-        onClick={onClick()}
+        onClick={onClick}
+        onDelete={onDelete}
         isSelected={card.ID === currentCard}
         ID={card.ID}
         key={index}
@@ -100,14 +101,25 @@ export default function Dashboard() {
         validThru={card.validThru} />
     ));
 
-    function onClick(): (id: string | number) => void {
-      return (id) => {
-        getRecordsFromCard(id)
-          .then((records) => {
-            setLocalRecords(records);
-            setCurrentCard(Number(id));
-          });
-      };
+    function onDelete(id: string | number): void {
+      deleteCard(id)
+        .then(() => {
+          getUsers(3).then((user) => {
+            setCurrentUser(user)
+            setCurrentCard(user.cards[0].ID)
+            getRecordsFromCard(user.cards[0].ID).then((records) => {
+              setLocalRecords(records)
+            })
+          })
+        })
+    }
+
+    function onClick(id: string | number): void {
+      getRecordsFromCard(id)
+        .then((records) => {
+          setLocalRecords(records);
+          setCurrentCard(Number(id));
+        });
     }
   }
 
