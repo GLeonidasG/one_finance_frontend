@@ -1,7 +1,5 @@
-import { v4 as uuid } from "uuid"
 import './App.css'
-import { Outlet, useRoutes } from 'react-router-dom'
-import {useEffect} from "react"
+import Dashboard from "./dashboard";
 
 function App() {
 
@@ -13,7 +11,7 @@ function App() {
           <div className="navbar-options">options</div>
         </div>
       </div>
-      <Outlet />
+      <Dashboard />
     </div>
   );
 }
