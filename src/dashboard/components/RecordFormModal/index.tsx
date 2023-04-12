@@ -31,7 +31,7 @@ export function RecordFormModal({ showModal, onSubmit, onCancel, action, data }:
 
   return showModal ? (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900 opacity-90 backdrop-blur-3xl">
-      <div className="flex flex-col p-8 font-bold text-black bg-gray-700 rounded-lg opacity-100">
+      <div className="flex flex-col p-8 font-bold text-black bg-gray-700 rounded-lg opacity-100 lg:w-96 m:w-80">
         <h1 className="text-xl font-semibold tracking-wide text-white">{action === "CREATE" ? "Create new record" : action === "UPDATE" && "Update current record"}</h1>
         <FormInput value={record.title} inputType="text" label="Title" onChange={(value) => setRecord({ ...record, title: value as string })} />
 
