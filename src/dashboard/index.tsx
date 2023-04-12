@@ -140,12 +140,12 @@ export default function Dashboard() {
             .then((value) => {
               setCurrentUser(value)
               if (value.cards.length) {
-                  const cardID = value.cards[0].ID
-                  setCurrentCard(cardID)
-                  getRecordsFromCard(cardID).then((records) => {
-                      setLocalRecords(records)
-                    })
-                }
+                const cardID = value.cards[0].ID
+                setCurrentCard(cardID)
+                getRecordsFromCard(cardID).then((records) => {
+                  setLocalRecords(records)
+                })
+              }
             })
 
         })
