@@ -6,14 +6,7 @@ type FormInputProps = {
 }
 export function FormInput({ inputType, label, onChange, value }: FormInputProps) {
   return (
-    <div style={{
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "start",
-      alignItems: "start",
-      minWidth: "250px",
-      maxWidth: "300px",
-    }}>
+    <div className="flex flex-col items-start justify-start min-w-full" >
 
       <span style={{ fontSize: 15, color: "white", margin: 4 }}>{label}</span>
       <input
@@ -25,10 +18,10 @@ export function FormInput({ inputType, label, onChange, value }: FormInputProps)
           borderStyle: "solid",
           borderColor: "#f9f9f9",
           borderWidth: 1,
-          minHeight: "30px",
-          maxHeight: "45px",
+          minHeight: "35px",
+          maxHeight: "55px",
           outline: "none",
-          paddingInline: "5px",
+          paddingInline: "8px",
           width: "100%",
           color: "white"
         }} />
